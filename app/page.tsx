@@ -58,10 +58,10 @@ const PreorderManagementSystem = () => {
   const loadFromGrist = async () => {
     try {
       const response = await fetch('/api/preorder');
-      console.log(response)
+    
       if (response.ok) {
         const data = await response.json();
-        console.log(data)
+     
         const gristPreorders = data.records.map((record: any) => ({
           id: record.id,
           productName: record.fields.productName || '',
@@ -187,7 +187,9 @@ const PreorderManagementSystem = () => {
   // Load data from localStorage on component mount
   useEffect(() => {
     const savedPreorders = localStorage.getItem('preorders');
+   
     if (savedPreorders && !isConnected) {
+      //console.log(savedPreorders,isConnected)
       setPreorders(JSON.parse(savedPreorders));
     }
     // ตรวจสอบการเชื่อมต่อ Grist อัตโนมัติ
@@ -216,6 +218,13 @@ const PreorderManagementSystem = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showAddForm]);
+
+  // โหลดข้อมูลจาก Grist เมื่อเชื่อมต่อสำเร็จ
+  useEffect(() => {
+    if (isConnected) {
+      loadFromGrist();
+    }
+  }, [isConnected]);
 
   const handleInputChange = (e:any) => {
     const { name, value } = e.target;
@@ -454,6 +463,22 @@ const PreorderManagementSystem = () => {
 
   registerLocale('th', th);
 
+  // ฟังก์ชันหาพรีออเดอร์ที่กำหนดส่งใกล้ถึง (ภายใน 2 วัน)
+  const getUpcomingSoonPreorders = () => {
+    const today = new Date();
+    return preorders.filter(preorder => {
+      if (preorder.deliveryDate && preorder.preorderDate) {
+        const preorderDate = new Date(preorder.preorderDate);
+        const deliveryDate = new Date(preorder.deliveryDate);
+        const diffDays = Math.ceil((deliveryDate.getTime() - preorderDate.getTime()) / (1000 * 60 * 60 * 24));
+        return diffDays <= 2 && deliveryDate >= today;
+      }
+      return false;
+    });
+  };
+
+  const upcomingSoonPreorders = getUpcomingSoonPreorders();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-yellow-50 to-white">
       {/* Header */}
@@ -533,6 +558,7 @@ const PreorderManagementSystem = () => {
             upcomingDeliveries={upcomingDeliveries}
             formatCurrency={formatCurrency}
             formatDate={toFullThaiDate}
+            upcomingSoonPreorders={upcomingSoonPreorders}
           />
         )}
 

@@ -6,9 +6,10 @@ interface DashboardTabProps {
   upcomingDeliveries: any[];
   formatCurrency: (amount: number) => string;
   formatDate: (dateString: string) => string;
+  upcomingSoonPreorders: any[];
 }
 
-const DashboardTab: React.FC<DashboardTabProps> = ({ stats, recentPreorders, upcomingDeliveries, formatCurrency, formatDate }) => {
+const DashboardTab: React.FC<DashboardTabProps> = ({ stats, recentPreorders, upcomingDeliveries, formatCurrency, formatDate, upcomingSoonPreorders }) => {
   
  
   // ฟังก์ชันหาหมวดหมู่ที่มียอดซื้อสูงสุด พร้อมจำนวนออเดอร์
@@ -153,6 +154,31 @@ const DashboardTab: React.FC<DashboardTabProps> = ({ stats, recentPreorders, upc
           </div>
         </div>
       </div>
+      {/* Upcoming Soon Deliveries (ภายใน 2 วัน) */}
+      {upcomingSoonPreorders && upcomingSoonPreorders.length > 0 && (
+        <div className="relative overflow-hidden rounded-2xl shadow-xl bg-gradient-to-br from-red-50 via-pink-50 to-white border-2 border-white mb-6">
+          <div className="p-6 border-b border-red-200 flex items-center gap-2">
+            <span className="text-2xl">⏳</span>
+            <h3 className="text-lg font-extrabold text-red-700 drop-shadow">กำหนดส่งภายใน 2 วัน</h3>
+          </div>
+          <div className="p-6">
+            <div className="space-y-4">
+              {upcomingSoonPreorders.map((preorder: any) => (
+                <div key={preorder.id} className="flex items-center justify-between p-4 bg-white bg-opacity-80 rounded-xl shadow border-l-4 border-red-300">
+                  <div>
+                    <p className="font-bold text-gray-900 drop-shadow">{preorder.productName}</p>
+                    <p className="text-sm text-red-700 font-semibold">กำหนดส่ง: {formatDate(preorder.deliveryDate)}</p>
+                  </div>
+                  <div className="text-right">
+                    <span className="h-5 w-5 text-red-600 ml-auto text-xl">⚡</span>
+                    <p className="text-sm text-red-500 font-bold drop-shadow">{formatCurrency(preorder.fullPrice - preorder.paidAmount)} คงเหลือ</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
