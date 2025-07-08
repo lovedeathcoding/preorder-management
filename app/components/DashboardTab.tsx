@@ -9,6 +9,8 @@ interface DashboardTabProps {
 }
 
 const DashboardTab: React.FC<DashboardTabProps> = ({ stats, recentPreorders, upcomingDeliveries, formatCurrency, formatDate }) => {
+  
+  console.log(recentPreorders)
   // ฟังก์ชันหาหมวดหมู่ที่มียอดซื้อสูงสุด พร้อมจำนวนออเดอร์
   const getTopCategory = () => {
     const categoryTotals: Record<string, { total: number; count: number }> = {};
