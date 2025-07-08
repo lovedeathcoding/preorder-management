@@ -58,8 +58,10 @@ const PreorderManagementSystem = () => {
   const loadFromGrist = async () => {
     try {
       const response = await fetch('/api/preorder');
+      console.log(response)
       if (response.ok) {
         const data = await response.json();
+        console.log(data)
         const gristPreorders = data.records.map((record: any) => ({
           id: record.id,
           productName: record.fields.productName || '',
