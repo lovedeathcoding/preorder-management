@@ -31,7 +31,7 @@ const ThaiDatePicker: React.FC<ThaiDatePickerProps> = ({
   selected,
   onChange,
   placeholder = 'เลือกวันที่',
-  className = 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500',
+  className = 'w-full px-3 py-2 border border-pink-300 rounded-xl shadow focus:outline-none focus:ring-2 focus:ring-pink-400 font-semibold text-pink-700',
 }) => {
   return (
     <DatePicker
@@ -43,11 +43,11 @@ const ThaiDatePicker: React.FC<ThaiDatePickerProps> = ({
       className={className}
       renderCustomHeader={({ date, decreaseMonth, increaseMonth }: any) => (
         <div className="flex items-center justify-between mb-2 px-2">
-          <button type="button" onClick={decreaseMonth} className="p-1 hover:bg-gray-100 rounded">←</button>
-          <span className="font-semibold">
+          <button type="button" onClick={decreaseMonth} className="p-1 bg-pink-100 hover:bg-pink-200 rounded text-pink-600 font-bold">←</button>
+          <span className="font-extrabold text-pink-700">
             {thaiMonths[date.getMonth()]} {date.getFullYear() + 543}
           </span>
-          <button type="button" onClick={increaseMonth} className="p-1 hover:bg-gray-100 rounded">→</button>
+          <button type="button" onClick={increaseMonth} className="p-1 bg-pink-100 hover:bg-pink-200 rounded text-pink-600 font-bold">→</button>
         </div>
       )}
       calendarStartDay={0} // Sunday

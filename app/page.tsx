@@ -24,6 +24,7 @@ interface Preorder {
   paymentDetails: string;
   paymentSlip: string | null;
   notes: string;
+  tags: string[];
   createdAt: string;
   updatedAt?: string;
 }
@@ -50,7 +51,8 @@ const PreorderManagementSystem = () => {
     deliveryMonth: '',
     paymentDetails: '',
     paymentSlip: null,
-    notes: ''
+    notes: '',
+    tags: []
   });
 
   const loadFromGrist = async () => {
@@ -239,9 +241,18 @@ const PreorderManagementSystem = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
+      // แปลง tags เป็น array ถ้าไม่ว่าง
+      let tagsArr: string[] = [];
+      const tagsValue: string | string[] = typeof formData.tags === 'undefined' || formData.tags === null ? '' : formData.tags;
+      if (Array.isArray(tagsValue)) {
+        tagsArr = tagsValue;
+      } else if (typeof tagsValue === 'string') {
+        tagsArr = tagsValue.split(',').map((tag: string) => tag.trim()).filter((tag: string) => tag.length > 0);
+      }
       const newPreorder = {
         id: editingPreorder ? editingPreorder.id : Date.now(),
         ...formData,
+        tags: tagsArr,
         fullPrice: formData.fullPrice || 0,
         paidAmount: formData.paidAmount || 0,
         createdAt: editingPreorder ? editingPreorder.createdAt : new Date().toISOString()
@@ -274,7 +285,8 @@ const PreorderManagementSystem = () => {
         deliveryMonth: '',
         paymentDetails: '',
         paymentSlip: null,
-        notes: ''
+        notes: '',
+        tags: []
       });
       setShowAddForm(false);
       // --- ลบ draft เมื่อบันทึกสำเร็จ ---
@@ -441,38 +453,39 @@ const PreorderManagementSystem = () => {
   registerLocale('th', th);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-yellow-50 to-white">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-gradient-to-r from-pink-200 via-yellow-100 to-red-200 shadow-lg rounded-b-3xl border-b-4 border-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
+          <div className="flex flex-col md:flex-row justify-between items-center py-6 gap-4 md:gap-0">
             <div className="flex items-center space-x-4">
-              <h1 className="text-2xl font-bold text-gray-900">ระบบบันทึกการพรีออเดอร์</h1>
+              <span className="text-3xl">🛒</span>
+              <h1 className="text-3xl font-extrabold text-pink-700 drop-shadow tracking-wide">P-OR-เด้อ</h1>
               <div className="flex items-center space-x-2">
                 {isConnected ? (
-                  <div className="flex items-center text-green-600">
+                  <div className="flex items-center text-green-600 font-bold bg-white bg-opacity-80 px-2 py-1 rounded shadow">
                     <Wifi size={16} className="mr-1" />
                     <span className="text-sm">เชื่อมต่อ Grist</span>
                   </div>
                 ) : (
-                  <div className="flex items-center text-red-600">
+                  <div className="flex items-center text-red-600 font-bold bg-white bg-opacity-80 px-2 py-1 rounded shadow">
                     <WifiOff size={16} className="mr-1" />
                     <span className="text-sm">ไม่เชื่อมต่อ</span>
                   </div>
                 )}
-                {syncStatus && (
-                  <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                {/* {syncStatus && (
+                  <span className="text-xs text-pink-700 bg-pink-100 border border-pink-200 px-2 py-1 rounded shadow ml-2">
                     {syncStatus}
                   </span>
-                )}
+                )} */}
               </div>
             </div>
             <div className="flex items-center space-x-3">
               <button
                 onClick={() => setShowAddForm(true)}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-colors"
+                className="bg-gradient-to-r from-pink-300 via-yellow-100 to-white text-pink-800 font-bold px-6 py-2 rounded-xl flex items-center gap-2 shadow-lg hover:scale-105 hover:shadow-xl transition-all text-lg"
               >
-                <PlusCircle size={20} />
+                <PlusCircle size={22} />
                 เพิ่มพรีออเดอร์
               </button>
             </div>
@@ -482,8 +495,8 @@ const PreorderManagementSystem = () => {
 
       {/* Navigation Tabs */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
-        <div className="border-b border-gray-200">
-          <nav className="-mb-px flex space-x-8">
+        <div className="border-b-2 border-pink-200">
+          <nav className="-mb-px flex space-x-4 md:space-x-8">
             {[
               { id: 'dashboard', label: 'แดชบอร์ด', icon: TrendingUp },
               { id: 'preorders', label: 'รายการพรีออเดอร์', icon: Package },
@@ -492,14 +505,16 @@ const PreorderManagementSystem = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`py-2 px-1 border-b-2 font-medium text-sm flex items-center gap-2 ${
-                  activeTab === tab.id
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
+                className={`py-2 px-4 md:px-6 rounded-t-xl font-bold text-sm md:text-base flex items-center gap-2 shadow-sm transition-all duration-150
+                  ${activeTab === tab.id
+                    ? 'bg-gradient-to-r from-pink-300 via-yellow-100 to-white text-pink-800 shadow-lg scale-105'
+                    : 'bg-white bg-opacity-80 text-pink-700 hover:bg-pink-100 hover:text-pink-900 border border-pink-100'}
+                `}
               >
-                <tab.icon size={16} />
-                {tab.label}
+                <span className="text-xs md:text-base flex items-center">
+                  <tab.icon size={18} />
+                </span>
+                <span className="hidden md:inline text-xs md:text-base">{tab.label}</span>
               </button>
             ))}
           </nav>
