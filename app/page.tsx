@@ -473,14 +473,15 @@ const PreorderManagementSystem = () => {
                     <span className="text-sm">ไม่เชื่อมต่อ</span>
                   </div>
                 )}
-                {/* {syncStatus && (
+                {syncStatus && (
                   <span className="text-xs text-pink-700 bg-pink-100 border border-pink-200 px-2 py-1 rounded shadow ml-2">
                     {syncStatus}
                   </span>
-                )} */}
+                )} 
               </div>
             </div>
             <div className="flex items-center space-x-3">
+               
               <button
                 onClick={() => setShowAddForm(true)}
                 className="bg-gradient-to-r from-pink-300 via-yellow-100 to-white text-pink-800 font-bold px-6 py-2 rounded-xl flex items-center gap-2 shadow-lg hover:scale-105 hover:shadow-xl transition-all text-lg"

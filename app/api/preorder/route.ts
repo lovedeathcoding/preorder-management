@@ -17,7 +17,7 @@ export async function GET() {
   const res = await fetch(`${GRIST_BASE_URL}/${GRIST_DOC_ID}/tables/${TABLE}/records`, {
     headers: gristHeaders,
   });
-   
+   console.log(res)
   if(!res.ok){
     return NextResponse.json({ error: 'Failed to fetch data from Grist' }, { status: 500 });
   }
